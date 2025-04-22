@@ -1,0 +1,58 @@
+package util.security;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.nio.charset.StandardCharsets;
+
+/**
+ * Utility class for handling password-related operations
+ */
+public class PasswordUtil {
+    
+    /**
+     * Hash a password using SHA-256
+     * @param password The plain-text password to hash
+     * @return The hashed password
+     */
+    public static String hashPassword(String password) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] encodedHash = digest.digest(
+                password.getBytes(StandardCharsets.UTF_8));
+            
+            return bytesToHex(encodedHash);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            // Fall back to plain text if hashing fails (should never happen with SHA-256)
+            return password;
+        }
+    }
+    
+    /**
+     * Converts a byte array to a hexadecimal string
+     * @param hash The byte array to convert
+     * @return A hexadecimal string representation
+     */
+    private static String bytesToHex(byte[] hash) {
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : hash) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+        return hexString.toString();
+    }
+    
+    /**
+     * Verify if a provided password matches a stored hash
+     * @param providedPassword The password provided by the user
+     * @param storedHash The hash stored in the database
+     * @return true if the password matches the hash, false otherwise
+     */
+    public static boolean verifyPassword(String providedPassword, String storedHash) {
+        String hashedProvidedPassword = hashPassword(providedPassword);
+        return hashedProvidedPassword.equals(storedHash);
+    }
+}
