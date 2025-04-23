@@ -3,6 +3,9 @@ package controller.auth;
 import model.entities.Auth;
 import model.entities.AuthModel;
 import view.auth.AuthView;
+import controller.admin.AdminController;
+import controller.student.StudentController;
+import controller.teacher.TeacherController;
 
 public class AuthController {
     
@@ -33,8 +36,8 @@ public class AuthController {
             Auth currentUser = model.getCurrentUser();
             view.showSuccessMessage("Welcome, " + currentUser.getFirstName() + " " + currentUser.getLastName() + "!");
             
-            // Open the appropriate view based on user role
-            openAppropriateView(currentUser);
+            // Navigate to the appropriate view based on user role
+            navigateByRole(currentUser);
             
             // Close the login view
             view.dispose();
@@ -47,14 +50,27 @@ public class AuthController {
         System.exit(0);
     }
     
-    private void openAppropriateView(Auth user) {
-        // Logic to open the appropriate view based on user role
-        // For example:
-        // if (user.getRoleType().equals("ADMIN")) {
-        //     new AdminController();
-        // } else if (user.getRoleType().equals("STUDENT")) {
-        //     new StudentController(user);
-        // }
+    /**
+     * Navigate to the appropriate view based on user role
+     * @param user The authenticated user
+     */
+    private void navigateByRole(Auth user) {
+        switch (user.getRoleType()) {
+            case "admin":
+                // Initialize admin view and controller
+                new AdminController(user);
+                break;
+            case "student":
+                // Initialize student view and controller
+                new StudentController(user);
+                break;
+            case "teacher":
+                // Initialize teacher view and controller
+                new TeacherController(user);
+                break;
+            default:
+                view.showErrorMessage("Unknown role type: " + user.getRoleType());
+                break;
+        }
     }
-    
 }

@@ -1,8 +1,9 @@
 package model.dao;
 
 import java.util.ArrayList;
-
 import model.entities.Course;
+import model.entities.CourseWithTeacher;
+import model.entities.Teacher;
 import util.database.Database;
 
 public class CourseDA {
@@ -27,4 +28,18 @@ public class CourseDA {
 			return courseList;
 		});
 	}
+	
+	public ArrayList<CourseWithTeacher> getCoursesWithTeachers() {
+        ArrayList<Course> courses = getCourseList();
+        ArrayList<CourseWithTeacher> coursesWithTeachers = new ArrayList<>();
+        TeacherCourseDA teacherCourseDA = new TeacherCourseDA();
+        
+        for (Course course : courses) {
+            Teacher teacher = teacherCourseDA.getTeacherForCourse(course.getCode());
+            CourseWithTeacher courseWithTeacher = new CourseWithTeacher(course, teacher);
+            coursesWithTeachers.add(courseWithTeacher);
+        }
+        
+        return coursesWithTeachers;
+    }
 }

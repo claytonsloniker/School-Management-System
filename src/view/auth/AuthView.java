@@ -14,7 +14,7 @@ public class AuthView extends JFrame {
     public AuthView() {
         // Set up the frame
         setTitle("School Management System - Login");
-        setSize(400, 300);
+        setSize(400, 225);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         
