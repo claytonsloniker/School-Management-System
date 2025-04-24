@@ -11,7 +11,7 @@ public class CourseManagementPanel extends JPanel {
     
     private JTable courseTable;
     private CourseTableModel tableModel;
-    private JButton addButton, editButton, deleteButton, assignTeacherButton, unassignTeacherButton;
+    private JButton addButton, editButton, deleteButton;
     
     public CourseManagementPanel() {
         setLayout(new BorderLayout(10, 10));
@@ -29,14 +29,10 @@ public class CourseManagementPanel extends JPanel {
         addButton = new JButton("Add Course");
         editButton = new JButton("Edit Course");
         deleteButton = new JButton("Delete Course");
-        assignTeacherButton = new JButton("Assign Teacher");
-        unassignTeacherButton = new JButton("Unassign Teacher");
         
         buttonPanel.add(addButton);
         buttonPanel.add(editButton);
         buttonPanel.add(deleteButton);
-        buttonPanel.add(assignTeacherButton);
-        buttonPanel.add(unassignTeacherButton);
         
         // Add components to panel
         add(titleLabel, BorderLayout.NORTH);
@@ -71,14 +67,6 @@ public class CourseManagementPanel extends JPanel {
     
     public void setDeleteButtonListener(ActionListener listener) {
         deleteButton.addActionListener(listener);
-    }
-    
-    public void setAssignTeacherButtonListener(ActionListener listener) {
-        assignTeacherButton.addActionListener(listener);
-    }
-    
-    public void setUnassignTeacherButtonListener(ActionListener listener) {
-        unassignTeacherButton.addActionListener(listener);
     }
     
     // Method to update table data with CourseWithTeacher objects

@@ -22,7 +22,7 @@ public class AdminController {
     
     // Controllers for specific features
     private AdminCourseController courseController;
-    //private StudentController studentController;
+    private AdminStudentController studentController;
     //private TeacherController teacherController;
     
     public AdminController(Auth user) {
@@ -33,15 +33,15 @@ public class AdminController {
         
         // Initialize feature controllers
         this.courseController = new AdminCourseController(view.getCoursePanel(), view);
-        //this.studentController = new StudentController(view.getStudentPanel(), view);
-        //this.teacherController = new TeacherController(view.getTeacherPanel(), view);
+        this.studentController = new AdminStudentController(view.getStudentPanel(), view);
+        // this.teacherController = new TeacherController(view.getTeacherPanel(), view);
         
         // Set up menu listeners
         setupMenuListeners();
 
         
         // Load initial data
-        //loadStudentData();
+        this.studentController.loadStudentData();
         //loadTeacherData();
         loadCourseData();
         

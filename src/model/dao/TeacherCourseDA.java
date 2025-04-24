@@ -55,11 +55,12 @@ public class TeacherCourseDA {
         }, null);
     }
     
-    public boolean unassignTeacherFromCourse(String courseCode) {
-        String query = "DELETE FROM tb_teacher_courses WHERE course_code = ?";
+    public boolean unassignTeacherFromCourse(String teacherId, String courseCode) {
+        String query = "DELETE FROM tb_teacher_courses WHERE teacher_id = ? AND course_code = ?";
         
         return new Database().executeQuery(query, stm -> {
-            stm.setString(1, courseCode);
+            stm.setString(1, teacherId);
+        	stm.setString(2, courseCode);
         }, null);
     }
 }
