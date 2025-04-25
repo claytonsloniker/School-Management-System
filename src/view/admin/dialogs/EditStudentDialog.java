@@ -4,34 +4,33 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.UUID;
+
 import model.entities.Student;
 import util.security.PasswordUtil;
 
-public class AddStudentDialog extends JDialog {
+public class EditStudentDialog extends JDialog {
     
     private JTextField studentIDField;
     private JTextField firstNameField;
     private JTextField lastNameField;
     private JTextField emailField;
     private JPasswordField passwordField;
-    private JCheckBox generateIDCheckBox;
-    private JCheckBox generatePasswordCheckBox;
+    private JCheckBox changePasswordCheckBox;
+    private JComboBox<String> statusComboBox;
     
     private JButton saveButton;
     private JButton cancelButton;
     
-    private boolean studentCreated = false;
-    private Student newStudent = null;
-    private String generatedPassword = "";
+    private boolean studentUpdated = false;
+    private Student updatedStudent = null;
+    private Student originalStudent;
     
-    public AddStudentDialog(JFrame parent) {
-        super(parent, "Add New Student", true);
+    public EditStudentDialog(JFrame parent, Student student) {
+        super(parent, "Edit Student", true);
+        this.originalStudent = student;
         
         // Set up dialog properties
-        setSize(450, 350);
+        setSize(450, 400);
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout(10, 10));
         
@@ -45,6 +44,9 @@ public class AddStudentDialog extends JDialog {
         add(formPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
         
+        // Populate fields with student data
+        populateFields();
+        
         // Add action listeners
         setupActionListeners();
     }
@@ -57,23 +59,16 @@ public class AddStudentDialog extends JDialog {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 5, 5, 5);
         
-        // Student ID
+        // Student ID (read-only)
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.weightx = 0.0;
         panel.add(new JLabel("Student ID:"), gbc);
         
         gbc.gridx = 1;
         gbc.weightx = 1.0;
         studentIDField = new JTextField(10);
+        studentIDField.setEditable(false); // Make ID field read-only
         panel.add(studentIDField, gbc);
-        
-        // Auto-generate ID checkbox
-        gbc.gridx = 2;
-        gbc.weightx = 0.0;
-        generateIDCheckBox = new JCheckBox("Auto-generate");
-        generateIDCheckBox.setSelected(true);
-        panel.add(generateIDCheckBox, gbc);
         
         // First Name
         gbc.gridx = 0;
@@ -82,7 +77,6 @@ public class AddStudentDialog extends JDialog {
         panel.add(new JLabel("First Name:"), gbc);
         
         gbc.gridx = 1;
-        gbc.gridwidth = 2;
         gbc.weightx = 1.0;
         firstNameField = new JTextField(20);
         panel.add(firstNameField, gbc);
@@ -90,12 +84,10 @@ public class AddStudentDialog extends JDialog {
         // Last Name
         gbc.gridx = 0;
         gbc.gridy = 2;
-        gbc.gridwidth = 1;
         gbc.weightx = 0.0;
         panel.add(new JLabel("Last Name:"), gbc);
         
         gbc.gridx = 1;
-        gbc.gridwidth = 2;
         gbc.weightx = 1.0;
         lastNameField = new JTextField(20);
         panel.add(lastNameField, gbc);
@@ -103,37 +95,39 @@ public class AddStudentDialog extends JDialog {
         // Email
         gbc.gridx = 0;
         gbc.gridy = 3;
-        gbc.gridwidth = 1;
         gbc.weightx = 0.0;
         panel.add(new JLabel("Email:"), gbc);
         
         gbc.gridx = 1;
-        gbc.gridwidth = 2;
         gbc.weightx = 1.0;
         emailField = new JTextField(20);
         panel.add(emailField, gbc);
         
-        // Password
+        // Change Password checkbox
         gbc.gridx = 0;
         gbc.gridy = 4;
-        gbc.gridwidth = 1;
         gbc.weightx = 0.0;
-        panel.add(new JLabel("Password:"), gbc);
+        changePasswordCheckBox = new JCheckBox("Change Password");
+        panel.add(changePasswordCheckBox, gbc);
         
+        // Password field
         gbc.gridx = 1;
         gbc.weightx = 1.0;
         passwordField = new JPasswordField(20);
+        passwordField.setEnabled(false); // Disabled by default until checkbox is checked
         panel.add(passwordField, gbc);
         
-        // Auto-generate password checkbox
-        gbc.gridx = 2;
+        // Status
+        gbc.gridx = 0;
+        gbc.gridy = 5;
         gbc.weightx = 0.0;
-        generatePasswordCheckBox = new JCheckBox("Auto-generate");
-        generatePasswordCheckBox.setSelected(true);
-        panel.add(generatePasswordCheckBox, gbc);
+        panel.add(new JLabel("Status:"), gbc);
         
-        // Update fields based on auto-generate checkboxes
-        updateFieldsState();
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        String[] statuses = {"active", "inactive"};
+        statusComboBox = new JComboBox<>(statuses);
+        panel.add(statusComboBox, gbc);
         
         return panel;
     }
@@ -141,7 +135,7 @@ public class AddStudentDialog extends JDialog {
     private JPanel createButtonPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         
-        saveButton = new JButton("Save");
+        saveButton = new JButton("Save Changes");
         cancelButton = new JButton("Cancel");
         
         panel.add(saveButton);
@@ -150,58 +144,38 @@ public class AddStudentDialog extends JDialog {
         return panel;
     }
     
-    private void updateFieldsState() {
-        studentIDField.setEditable(!generateIDCheckBox.isSelected());
-        passwordField.setEditable(!generatePasswordCheckBox.isSelected());
+    private void populateFields() {
+        studentIDField.setText(originalStudent.getId());
+        firstNameField.setText(originalStudent.getFirstName());
+        lastNameField.setText(originalStudent.getLastName());
+        emailField.setText(originalStudent.getEmail());
+        statusComboBox.setSelectedItem(originalStudent.getStatus());
         
-        if (generateIDCheckBox.isSelected()) {
-            // Generate a student ID (e.g., S followed by 5 digits)
-            String generatedID = "S" + (10000 + (int)(Math.random() * 90000));
-            studentIDField.setText(generatedID);
-        }
-        
-        if (generatePasswordCheckBox.isSelected()) {
-            // Generate a random password (8 characters)
-            generatedPassword = UUID.randomUUID().toString().substring(0, 8);
-            passwordField.setText(generatedPassword);
-        } else {
-            generatedPassword = new String(passwordField.getPassword());
-        }
+        // Don't populate the password field with the hashed password
+        passwordField.setText("");
     }
     
     private void setupActionListeners() {
-        generateIDCheckBox.addActionListener(e -> updateFieldsState());
-        generatePasswordCheckBox.addActionListener(e -> updateFieldsState());
-        
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (validateInput()) {
-                    saveNewStudent();
-                }
+        changePasswordCheckBox.addActionListener(e -> {
+            passwordField.setEnabled(changePasswordCheckBox.isSelected());
+            if (changePasswordCheckBox.isSelected()) {
+                passwordField.requestFocus();
             }
         });
         
-        cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                studentCreated = false;
-                dispose();
+        saveButton.addActionListener(e -> {
+            if (validateInput()) {
+                saveUpdatedStudent();
             }
+        });
+        
+        cancelButton.addActionListener(e -> {
+            studentUpdated = false;
+            dispose();
         });
     }
     
     private boolean validateInput() {
-        // Check if student ID is empty
-        if (studentIDField.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, 
-                "Student ID cannot be empty", 
-                "Validation Error", 
-                JOptionPane.ERROR_MESSAGE);
-            studentIDField.requestFocus();
-            return false;
-        }
-        
         // Check if first name is empty
         if (firstNameField.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, 
@@ -243,25 +217,26 @@ public class AddStudentDialog extends JDialog {
             return false;
         }
         
-        // Check if password is empty or too short
-        String password = new String(passwordField.getPassword());
-        if (password.isEmpty()) {
-            JOptionPane.showMessageDialog(this, 
-                "Password cannot be empty", 
-                "Validation Error", 
-                JOptionPane.ERROR_MESSAGE);
-            passwordField.requestFocus();
-            return false;
-        }
-        
-        // Password validation (only if not auto-generated)
-        if (!generatePasswordCheckBox.isSelected() && password.length() < 8) {
-            JOptionPane.showMessageDialog(this, 
-                "Password must be at least 8 characters long", 
-                "Validation Error", 
-                JOptionPane.ERROR_MESSAGE);
-            passwordField.requestFocus();
-            return false;
+        // Check if password is valid when changing it
+        if (changePasswordCheckBox.isSelected()) {
+            String password = new String(passwordField.getPassword());
+            if (password.isEmpty()) {
+                JOptionPane.showMessageDialog(this, 
+                    "Password cannot be empty when changing password", 
+                    "Validation Error", 
+                    JOptionPane.ERROR_MESSAGE);
+                passwordField.requestFocus();
+                return false;
+            }
+            
+            if (password.length() < 8) {
+                JOptionPane.showMessageDialog(this, 
+                    "Password must be at least 8 characters long", 
+                    "Validation Error", 
+                    JOptionPane.ERROR_MESSAGE);
+                passwordField.requestFocus();
+                return false;
+            }
         }
         
         return true;
@@ -273,40 +248,40 @@ public class AddStudentDialog extends JDialog {
         return email.matches(emailRegex);
     }
     
-    private void saveNewStudent() {
+    private void saveUpdatedStudent() {
         String id = studentIDField.getText().trim();
         String firstName = firstNameField.getText().trim();
         String lastName = lastNameField.getText().trim();
         String email = emailField.getText().trim();
-        String password = new String(passwordField.getPassword());
+        String status = (String) statusComboBox.getSelectedItem();
         
-        // Store the password for display purposes if auto-generated
-        if (generatePasswordCheckBox.isSelected()) {
-            generatedPassword = password;
+        // Create updated student with either the new password or the original one
+        String password;
+        if (changePasswordCheckBox.isSelected()) {
+            String newPassword = new String(passwordField.getPassword());
+            password = PasswordUtil.hashPassword(newPassword);
+            
+            // Show dialog with the new password
+            showPasswordUpdatedDialog(firstName, lastName, newPassword);
+        } else {
+            password = originalStudent.getPassword(); // Keep the original hashed password
         }
         
-        // Create new student with "active" status
-        // Hash the password before storing
-        String hashedPassword = PasswordUtil.hashPassword(password);
-        newStudent = new Student(id, firstName, lastName, email, hashedPassword, "active");
-        studentCreated = true;
-        
-        // Display password info before closing
-        if (generatePasswordCheckBox.isSelected()) {
-            showPasswordInfoDialog(firstName, lastName, generatedPassword);
-        }
+        // Create updated student
+        updatedStudent = new Student(id, firstName, lastName, email, password, status);
+        studentUpdated = true;
         
         // Close the dialog
         dispose();
     }
     
     /**
-     * Show an information dialog with the student's generated password
+     * Show an information dialog with the student's new password
      * @param firstName Student's first name
      * @param lastName Student's last name
-     * @param password The generated password
+     * @param password The new password
      */
-    private void showPasswordInfoDialog(String firstName, String lastName, String password) {
+    private void showPasswordUpdatedDialog(String firstName, String lastName, String password) {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
@@ -316,10 +291,10 @@ public class AddStudentDialog extends JDialog {
         infoArea.setLineWrap(true);
         infoArea.setWrapStyleWord(true);
         infoArea.setText(
-            "Student account created successfully!\n\n" +
+            "Password updated for:\n\n" +
             "Student: " + firstName + " " + lastName + "\n" +
-            "Generated Password: " + password + "\n\n" +
-            "Please provide this password to the student. They will be able to change it after logging in."
+            "New Password: " + password + "\n\n" +
+            "Please provide this password to the student."
         );
         
         JScrollPane scrollPane = new JScrollPane(infoArea);
@@ -345,72 +320,24 @@ public class AddStudentDialog extends JDialog {
         JOptionPane.showMessageDialog(
             this, 
             panel, 
-            "Account Created - Password Information", 
+            "Password Updated", 
             JOptionPane.INFORMATION_MESSAGE
         );
     }
     
     /**
-     * Check if a student was created
-     * @return true if a student was created, false otherwise
+     * Check if a student was updated
+     * @return true if a student was updated, false otherwise
      */
-    public boolean isStudentCreated() {
-        return studentCreated;
+    public boolean isStudentUpdated() {
+        return studentUpdated;
     }
     
     /**
-     * Get the created student
-     * @return the created student, or null if no student was created
+     * Get the updated student
+     * @return the updated student, or null if no student was updated
      */
-    public Student getStudent() {
-        return newStudent;
-    }
-    
-    /**
-     * Get the Student ID field
-     * @return the Student ID field
-     */
-    public JTextField getStudentIDField() {
-        return studentIDField;
-    }
-    
-    /**
-     * Get the first name field
-     * @return the first name field
-     */
-    public JTextField getFirstNameField() {
-        return firstNameField;
-    }
-    
-    /**
-     * Get the last name field
-     * @return the last name field
-     */
-    public JTextField getLastNameField() {
-        return lastNameField;
-    }
-    
-    /**
-     * Get the email field
-     * @return the email field
-     */
-    public JTextField getEmailField() {
-        return emailField;
-    }
-    
-    /**
-     * Get the password field
-     * @return the password field
-     */
-    public JPasswordField getPasswordField() {
-        return passwordField;
-    }
-    
-    /**
-     * Get the generated password
-     * @return the generated password
-     */
-    public String getGeneratedPassword() {
-        return generatedPassword;
+    public Student getUpdatedStudent() {
+        return updatedStudent;
     }
 }

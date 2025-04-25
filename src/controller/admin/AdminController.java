@@ -3,14 +3,17 @@ package controller.admin;
 import model.dao.CourseDA;
 import model.dao.TeacherCourseDA;
 import model.entities.Auth;
+import model.entities.AuthModel;
 import view.admin.AdminView;
 import view.admin.CourseManagementPanel;
+import view.auth.AuthView;
 
 import java.util.ArrayList;
 
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 
+import controller.auth.AuthController;
 import model.entities.Course;
 import model.entities.CourseWithTeacher;
 import model.entities.Teacher;
@@ -23,7 +26,7 @@ public class AdminController {
     // Controllers for specific features
     private AdminCourseController courseController;
     private AdminStudentController studentController;
-    //private TeacherController teacherController;
+    private AdminTeacherController teacherController;
     
     public AdminController(Auth user) {
         this.currentUser = user;
@@ -34,7 +37,7 @@ public class AdminController {
         // Initialize feature controllers
         this.courseController = new AdminCourseController(view.getCoursePanel(), view);
         this.studentController = new AdminStudentController(view.getStudentPanel(), view);
-        // this.teacherController = new TeacherController(view.getTeacherPanel(), view);
+        this.teacherController = new AdminTeacherController(view.getTeacherPanel(), view);
         
         // Set up menu listeners
         setupMenuListeners();
@@ -42,7 +45,7 @@ public class AdminController {
         
         // Load initial data
         this.studentController.loadStudentData();
-        //loadTeacherData();
+        this.teacherController.loadTeacherData();
         loadCourseData();
         
         // Display the view
@@ -79,7 +82,19 @@ public class AdminController {
     }
     
     private void handleLogout() {
-        // Implementation for logging out
+        // Close the admin view
+        view.dispose();
+        
+        // Create and show the login view again
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            AuthView authView = new AuthView();
+            AuthModel authModel = new AuthModel();
+            authModel.logout();
+            AuthController authController = new AuthController(authView, authModel);
+            
+            // Display the login view
+            authView.setVisible(true);
+        });
     }
 
     private void handleAssignTeacher() {

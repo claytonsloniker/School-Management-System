@@ -55,10 +55,10 @@ public class AdminStudentController {
             boolean success = studentDA.addStudent(newStudent);
             
             if (success) {
-                JOptionPane.showMessageDialog(parentFrame, 
-                    "Student added successfully", 
-                    "Success", 
-                    JOptionPane.INFORMATION_MESSAGE);
+//                JOptionPane.showMessageDialog(parentFrame, 
+//                    "Student added successfully", 
+//                    "Success", 
+//                    JOptionPane.INFORMATION_MESSAGE);
                 loadStudentData();
             } else {
                 JOptionPane.showMessageDialog(parentFrame, 
@@ -88,10 +88,10 @@ public class AdminStudentController {
             boolean success = studentDA.updateStudent(updatedStudent);
             
             if (success) {
-                JOptionPane.showMessageDialog(parentFrame, 
-                    "Student updated successfully", 
-                    "Success", 
-                    JOptionPane.INFORMATION_MESSAGE);
+//                JOptionPane.showMessageDialog(parentFrame, 
+//                    "Student updated successfully", 
+//                    "Success", 
+//                    JOptionPane.INFORMATION_MESSAGE);
                 loadStudentData();
             } else {
                 JOptionPane.showMessageDialog(parentFrame, 

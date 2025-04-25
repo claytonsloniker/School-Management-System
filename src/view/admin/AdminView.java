@@ -2,6 +2,8 @@ package view.admin;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
+
 import model.entities.Auth;
 
 public class AdminView extends JFrame {
@@ -20,6 +22,10 @@ public class AdminView extends JFrame {
     private JMenuItem teacherMenuItem;
     private JMenuItem courseMenuItem;
     private JMenuItem logoutMenuItem;
+    
+    //action listeners
+    private ActionListener logoutListener;
+
     
     public AdminView(Auth user) {
         this.currentUser = user;
@@ -133,6 +139,11 @@ public class AdminView extends JFrame {
         studentsButton.addActionListener(e -> showPanel("students"));
         teachersButton.addActionListener(e -> showPanel("teachers"));
         coursesButton.addActionListener(e -> showPanel("courses"));
+        logoutButton.addActionListener(e -> {
+            if (logoutListener != null) {
+                logoutListener.actionPerformed(e);
+            }
+        });
     }
     
     private JButton createNavButton(String text) {
@@ -153,7 +164,8 @@ public class AdminView extends JFrame {
     
     // Methods for controller to set listeners
     
-    public void setLogoutListener(java.awt.event.ActionListener listener) {
+    public void setLogoutListener(ActionListener listener) {
+        this.logoutListener = listener;
         logoutMenuItem.addActionListener(listener);
     }
     

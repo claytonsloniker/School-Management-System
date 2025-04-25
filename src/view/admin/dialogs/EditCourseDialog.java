@@ -77,7 +77,7 @@ public class EditCourseDialog extends JDialog {
         gbc.gridx = 1;
         gbc.weightx = 1.0;
         codeField = new JTextField(10);
-        codeField.setEditable(false); // Make code field read-only
+        codeField.setEditable(false); //read-only
         panel.add(codeField, gbc);
         
         // Course Name

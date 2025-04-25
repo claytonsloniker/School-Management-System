@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import model.entities.Student;
 
 public class StudentTableModel extends AbstractTableModel {
-    private String[] columnNames = {"Student ID", "First Name", "Last Name", "Email", "Password"};
+    private String[] columnNames = {"Student ID", "First Name", "Last Name", "Email"};
     private ArrayList<Student> students;
 
     public StudentTableModel(ArrayList<Student> students) {
@@ -43,8 +43,6 @@ public class StudentTableModel extends AbstractTableModel {
                 return student.getLastName();
             case 3:
                 return student.getEmail();
-            case 4:
-                return "********"; // For security, don't show actual password
             default:
                 return null;
         }

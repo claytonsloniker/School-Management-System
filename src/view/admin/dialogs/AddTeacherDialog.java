@@ -4,15 +4,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.UUID;
-import model.entities.Student;
+import model.entities.Teacher;
 import util.security.PasswordUtil;
 
-public class AddStudentDialog extends JDialog {
+public class AddTeacherDialog extends JDialog {
     
-    private JTextField studentIDField;
+    private JTextField teacherIDField;
     private JTextField firstNameField;
     private JTextField lastNameField;
     private JTextField emailField;
@@ -23,12 +21,12 @@ public class AddStudentDialog extends JDialog {
     private JButton saveButton;
     private JButton cancelButton;
     
-    private boolean studentCreated = false;
-    private Student newStudent = null;
+    private boolean teacherCreated = false;
+    private Teacher newTeacher = null;
     private String generatedPassword = "";
     
-    public AddStudentDialog(JFrame parent) {
-        super(parent, "Add New Student", true);
+    public AddTeacherDialog(JFrame parent) {
+        super(parent, "Add New Teacher", true);
         
         // Set up dialog properties
         setSize(450, 350);
@@ -57,16 +55,16 @@ public class AddStudentDialog extends JDialog {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 5, 5, 5);
         
-        // Student ID
+        // Teacher ID
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 0.0;
-        panel.add(new JLabel("Student ID:"), gbc);
+        panel.add(new JLabel("Teacher ID:"), gbc);
         
         gbc.gridx = 1;
         gbc.weightx = 1.0;
-        studentIDField = new JTextField(10);
-        panel.add(studentIDField, gbc);
+        teacherIDField = new JTextField(10);
+        panel.add(teacherIDField, gbc);
         
         // Auto-generate ID checkbox
         gbc.gridx = 2;
@@ -151,13 +149,13 @@ public class AddStudentDialog extends JDialog {
     }
     
     private void updateFieldsState() {
-        studentIDField.setEditable(!generateIDCheckBox.isSelected());
+        teacherIDField.setEditable(!generateIDCheckBox.isSelected());
         passwordField.setEditable(!generatePasswordCheckBox.isSelected());
         
         if (generateIDCheckBox.isSelected()) {
-            // Generate a student ID (e.g., S followed by 5 digits)
-            String generatedID = "S" + (10000 + (int)(Math.random() * 90000));
-            studentIDField.setText(generatedID);
+            // Generate a teacher ID (e.g., T followed by 5 digits)
+            String generatedID = "T" + (10000 + (int)(Math.random() * 90000));
+            teacherIDField.setText(generatedID);
         }
         
         if (generatePasswordCheckBox.isSelected()) {
@@ -173,32 +171,26 @@ public class AddStudentDialog extends JDialog {
         generateIDCheckBox.addActionListener(e -> updateFieldsState());
         generatePasswordCheckBox.addActionListener(e -> updateFieldsState());
         
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (validateInput()) {
-                    saveNewStudent();
-                }
+        saveButton.addActionListener(e -> {
+            if (validateInput()) {
+                saveNewTeacher();
             }
         });
         
-        cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                studentCreated = false;
-                dispose();
-            }
+        cancelButton.addActionListener(e -> {
+            teacherCreated = false;
+            dispose();
         });
     }
     
     private boolean validateInput() {
-        // Check if student ID is empty
-        if (studentIDField.getText().trim().isEmpty()) {
+        // Check if teacher ID is empty
+        if (teacherIDField.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, 
-                "Student ID cannot be empty", 
+                "Teacher ID cannot be empty", 
                 "Validation Error", 
                 JOptionPane.ERROR_MESSAGE);
-            studentIDField.requestFocus();
+            teacherIDField.requestFocus();
             return false;
         }
         
@@ -273,8 +265,8 @@ public class AddStudentDialog extends JDialog {
         return email.matches(emailRegex);
     }
     
-    private void saveNewStudent() {
-        String id = studentIDField.getText().trim();
+    private void saveNewTeacher() {
+        String id = teacherIDField.getText().trim();
         String firstName = firstNameField.getText().trim();
         String lastName = lastNameField.getText().trim();
         String email = emailField.getText().trim();
@@ -285,11 +277,11 @@ public class AddStudentDialog extends JDialog {
             generatedPassword = password;
         }
         
-        // Create new student with "active" status
+        // Create new teacher with "active" status
         // Hash the password before storing
         String hashedPassword = PasswordUtil.hashPassword(password);
-        newStudent = new Student(id, firstName, lastName, email, hashedPassword, "active");
-        studentCreated = true;
+        newTeacher = new Teacher(id, firstName, lastName, email, hashedPassword, "active");
+        teacherCreated = true;
         
         // Display password info before closing
         if (generatePasswordCheckBox.isSelected()) {
@@ -301,9 +293,9 @@ public class AddStudentDialog extends JDialog {
     }
     
     /**
-     * Show an information dialog with the student's generated password
-     * @param firstName Student's first name
-     * @param lastName Student's last name
+     * Show an information dialog with the teacher's generated password
+     * @param firstName Teacher's first name
+     * @param lastName Teacher's last name
      * @param password The generated password
      */
     private void showPasswordInfoDialog(String firstName, String lastName, String password) {
@@ -316,10 +308,10 @@ public class AddStudentDialog extends JDialog {
         infoArea.setLineWrap(true);
         infoArea.setWrapStyleWord(true);
         infoArea.setText(
-            "Student account created successfully!\n\n" +
-            "Student: " + firstName + " " + lastName + "\n" +
+            "Teacher account created successfully!\n\n" +
+            "Teacher: " + firstName + " " + lastName + "\n" +
             "Generated Password: " + password + "\n\n" +
-            "Please provide this password to the student. They will be able to change it after logging in."
+            "Please provide this password to the teacher. They will be able to change it after logging in."
         );
         
         JScrollPane scrollPane = new JScrollPane(infoArea);
@@ -351,59 +343,19 @@ public class AddStudentDialog extends JDialog {
     }
     
     /**
-     * Check if a student was created
-     * @return true if a student was created, false otherwise
+     * Check if a teacher was created
+     * @return true if a teacher was created, false otherwise
      */
-    public boolean isStudentCreated() {
-        return studentCreated;
+    public boolean isTeacherCreated() {
+        return teacherCreated;
     }
     
     /**
-     * Get the created student
-     * @return the created student, or null if no student was created
+     * Get the created teacher
+     * @return the created teacher, or null if no teacher was created
      */
-    public Student getStudent() {
-        return newStudent;
-    }
-    
-    /**
-     * Get the Student ID field
-     * @return the Student ID field
-     */
-    public JTextField getStudentIDField() {
-        return studentIDField;
-    }
-    
-    /**
-     * Get the first name field
-     * @return the first name field
-     */
-    public JTextField getFirstNameField() {
-        return firstNameField;
-    }
-    
-    /**
-     * Get the last name field
-     * @return the last name field
-     */
-    public JTextField getLastNameField() {
-        return lastNameField;
-    }
-    
-    /**
-     * Get the email field
-     * @return the email field
-     */
-    public JTextField getEmailField() {
-        return emailField;
-    }
-    
-    /**
-     * Get the password field
-     * @return the password field
-     */
-    public JPasswordField getPasswordField() {
-        return passwordField;
+    public Teacher getTeacher() {
+        return newTeacher;
     }
     
     /**
