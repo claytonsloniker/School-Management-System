@@ -1,5 +1,6 @@
 package controller.admin;
 
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import javax.swing.*;
 
@@ -9,7 +10,8 @@ import model.entities.Course;
 import model.entities.CourseWithTeacher;
 import model.entities.Teacher;
 import view.admin.CourseManagementPanel;
-import view.admin.dialogs.*;
+import view.admin.dialogs.AddCourseDialog;
+import view.admin.dialogs.EditCourseDialog;
 
 public class AdminCourseController {
     
@@ -35,6 +37,13 @@ public class AdminCourseController {
         view.setAddButtonListener(e -> handleAddCourse());
         view.setEditButtonListener(e -> handleEditCourse());
         view.setDeleteButtonListener(e -> handleDeleteCourse());
+        
+        // Setup search listeners
+        view.setSearchListener(e -> handleSearch(e));
+        view.setResetListener(e -> {
+            loadCourseData();
+            view.clearFilter();
+        });
     }
     
     public void loadCourseData() {
@@ -51,6 +60,7 @@ public class AdminCourseController {
     }
     
     private void handleAddCourse() {
+        // Implementation for adding a course
         AddCourseDialog dialog = new AddCourseDialog(parentFrame);
         dialog.setVisible(true);
         
@@ -117,12 +127,12 @@ public class AdminCourseController {
     }
     
     private void handleDeleteCourse() {
-    	// Get the selected course from the table
+        // Get the selected course from the table
         CourseWithTeacher selectedCourseWithTeacher = view.getSelectedCourse();
         
         if (selectedCourseWithTeacher == null) {
             JOptionPane.showMessageDialog(parentFrame, 
-                "Please select a course to edit", 
+                "Please select a course to delete", 
                 "No Selection", 
                 JOptionPane.WARNING_MESSAGE);
             return;
@@ -159,6 +169,26 @@ public class AdminCourseController {
                     JOptionPane.ERROR_MESSAGE);
             }
         }
-
+    }
+    
+    private void handleAssignTeacher() {
+        // Implementation for assigning a teacher to a course
+    }
+    
+    private void handleUnassignTeacher() {
+        // Implementation for unassigning a teacher from a course
+    }
+    
+    private void handleSearch(ActionEvent e) {
+        String actionCommand = e.getActionCommand();
+        String[] parts = actionCommand.split("\\|");
+        
+        if (parts.length == 2) {
+            String searchText = parts[0];
+            String filterCriteria = parts[1];
+            
+            // Apply filter directly to the table
+            view.applyFilter(searchText, filterCriteria);
+        }
     }
 }

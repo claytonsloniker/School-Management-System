@@ -1,23 +1,24 @@
 package model.entities;
 
-public class Auth {
+public class Admin {
     private String id;
-    private String roleType;
     private String firstName;
     private String lastName;
+    private String email;
     private String profilePicture;
     
     /**
-     * @param id
-     * @param roleType
-     * @param firstName
-     * @param lastName
+     * Constructor for Admin
+     * @param id Admin ID
+     * @param firstName First name
+     * @param lastName Last name
+     * @param email Email address
      */
-    public Auth(String id, String roleType, String firstName, String lastName) {
+    public Admin(String id, String firstName, String lastName, String email) {
         this.id = id;
-        this.roleType = roleType;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.email = email;
     }
     
     /**
@@ -32,20 +33,6 @@ public class Auth {
      */
     public void setId(String id) {
         this.id = id;
-    }
-    
-    /**
-     * @return the roleType
-     */
-    public String getRoleType() {
-        return roleType;
-    }
-    
-    /**
-     * @param roleType the roleType to set
-     */
-    public void setRoleType(String roleType) {
-        this.roleType = roleType;
     }
     
     /**
@@ -76,16 +63,44 @@ public class Auth {
         this.lastName = lastName;
     }
     
+    /**
+     * @return the email
+     */
+    public String getEmail() {
+        return email;
+    }
+    
+    /**
+     * @param email the email to set
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
+    /**
+     * @return the profilePicture
+     */
     public String getProfilePicture() {
         return profilePicture;
     }
-
+    
+    /**
+     * @param profilePicture the profilePicture to set
+     */
     public void setProfilePicture(String profilePicture) {
         this.profilePicture = profilePicture;
     }
     
+    /**
+     * @return the full name (first + last)
+     */
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+    
     @Override
     public String toString() {
-        return "Auth [id=" + id + ", roleType=" + roleType + ", firstName=" + firstName + ", lastName=" + lastName + "]";
+        return "Admin [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + 
+               ", email=" + email + "]";
     }
 }

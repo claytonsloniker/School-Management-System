@@ -1,5 +1,7 @@
 package controller.admin;
 
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import javax.swing.*;
 
@@ -31,6 +33,12 @@ public class AdminStudentController {
         view.setAddButtonListener(e -> handleAddStudent());
         view.setEditButtonListener(e -> handleEditStudent());
         view.setDeleteButtonListener(e -> handleDeleteStudent());
+        
+        view.setSearchListener(e -> handleSearch(e));
+        view.setResetListener(e -> {
+            loadStudentData();
+            view.clearFilter();
+        });
     }
     
     public void loadStudentData() {
@@ -55,10 +63,6 @@ public class AdminStudentController {
             boolean success = studentDA.addStudent(newStudent);
             
             if (success) {
-//                JOptionPane.showMessageDialog(parentFrame, 
-//                    "Student added successfully", 
-//                    "Success", 
-//                    JOptionPane.INFORMATION_MESSAGE);
                 loadStudentData();
             } else {
                 JOptionPane.showMessageDialog(parentFrame, 
@@ -88,10 +92,6 @@ public class AdminStudentController {
             boolean success = studentDA.updateStudent(updatedStudent);
             
             if (success) {
-//                JOptionPane.showMessageDialog(parentFrame, 
-//                    "Student updated successfully", 
-//                    "Success", 
-//                    JOptionPane.INFORMATION_MESSAGE);
                 loadStudentData();
             } else {
                 JOptionPane.showMessageDialog(parentFrame, 
@@ -136,6 +136,19 @@ public class AdminStudentController {
                     "Error", 
                     JOptionPane.ERROR_MESSAGE);
             }
+        }
+    }
+    
+    private void handleSearch(ActionEvent e) {
+        String actionCommand = e.getActionCommand();
+        String[] parts = actionCommand.split("\\|");
+        
+        if (parts.length == 2) {
+            String searchText = parts[0];
+            String filterCriteria = parts[1];
+            
+            // Apply filter directly to the table
+            view.applyFilter(searchText, filterCriteria);
         }
     }
 }

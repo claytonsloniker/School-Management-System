@@ -1,5 +1,6 @@
 package controller.admin;
 
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import javax.swing.*;
 
@@ -31,6 +32,12 @@ public class AdminTeacherController {
         view.setAddButtonListener(e -> handleAddTeacher());
         view.setEditButtonListener(e -> handleEditTeacher());
         view.setDeleteButtonListener(e -> handleDeleteTeacher());
+        
+        view.setSearchListener(e -> handleSearch(e));
+        view.setResetListener(e -> {
+            loadTeacherData();
+            view.clearFilter();
+        });
     }
     
     public void loadTeacherData() {
@@ -128,6 +135,19 @@ public class AdminTeacherController {
                     "Error", 
                     JOptionPane.ERROR_MESSAGE);
             }
+        }
+    }
+    
+    private void handleSearch(ActionEvent e) {
+        String actionCommand = e.getActionCommand();
+        String[] parts = actionCommand.split("\\|");
+        
+        if (parts.length == 2) {
+            String searchText = parts[0];
+            String filterCriteria = parts[1];
+            
+            // Apply filter directly to the table
+            view.applyFilter(searchText, filterCriteria);
         }
     }
 }

@@ -7,6 +7,7 @@ public class Student {
     private String email;
     private String password;
     private String status;
+    private String profilePicture;
     
     /**
      * Constructor for Student
@@ -115,6 +116,14 @@ public class Student {
      */
     public String getFullName() {
         return firstName + " " + lastName;
+    }
+    
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
     
     @Override

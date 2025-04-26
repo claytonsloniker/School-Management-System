@@ -1,5 +1,7 @@
 package controller.auth;
 
+import model.dao.AdminDA;
+import model.entities.Admin;
 import model.entities.Auth;
 import model.entities.AuthModel;
 import view.auth.AuthView;
@@ -57,8 +59,17 @@ public class AuthController {
     private void navigateByRole(Auth user) {
         switch (user.getRoleType()) {
             case "admin":
+                // Get full Admin object from database
+                AdminDA adminDA = new AdminDA();
+                Admin adminUser = adminDA.getAdminById(user.getId());
+                
+                if (adminUser == null) {
+                    view.showErrorMessage("Failed to load admin user data");
+                    return;
+                }
+                
                 // Initialize admin view and controller
-                new AdminController(user);
+                new AdminController(adminUser);
                 break;
             case "student":
                 // Initialize student view and controller

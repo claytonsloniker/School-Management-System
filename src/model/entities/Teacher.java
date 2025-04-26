@@ -7,6 +7,7 @@ public class Teacher {
     private String email;
     private String password;
     private String status;
+    private String profilePicture;
     
     public Teacher(String id, String firstName, String lastName, String email, String password, String status) {
         this.id = id;
@@ -82,6 +83,14 @@ public class Teacher {
     
     public String getFullName() {
         return firstName + " " + lastName;
+    }
+    
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
     
     @Override

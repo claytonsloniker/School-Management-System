@@ -60,4 +60,17 @@ public class StudentDA {
             stm.setString(1, studentId);
         }, null);
     }
+    
+    public boolean updateStudentProfilePicture(String studentId, String profilePicturePath) {
+        String query = "UPDATE tb_user SET profile_picture = ? WHERE id = ? AND role_type = 'student'";
+        
+        return new Database().executeQuery(query, stm -> {
+            if (profilePicturePath == null) {
+                stm.setNull(1, java.sql.Types.VARCHAR);
+            } else {
+                stm.setString(1, profilePicturePath);
+            }
+            stm.setString(2, studentId);
+        }, null);
+    }
 }

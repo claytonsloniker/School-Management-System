@@ -1,13 +1,19 @@
 package controller.admin;
 
+import model.dao.AdminDA;
 import model.dao.CourseDA;
 import model.dao.TeacherCourseDA;
+import model.entities.Admin;
 import model.entities.Auth;
 import model.entities.AuthModel;
 import view.admin.AdminView;
 import view.admin.CourseManagementPanel;
 import view.auth.AuthView;
 
+import java.beans.PropertyChangeEvent;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import javax.swing.JComboBox;
@@ -21,14 +27,14 @@ import model.entities.Teacher;
 public class AdminController {
     
     private AdminView view;
-    private Auth currentUser;
+    private Admin currentUser;
     
     // Controllers for specific features
     private AdminCourseController courseController;
     private AdminStudentController studentController;
     private AdminTeacherController teacherController;
     
-    public AdminController(Auth user) {
+    public AdminController(Admin user) {
         this.currentUser = user;
         
         // Initialize the admin view
@@ -39,9 +45,10 @@ public class AdminController {
         this.studentController = new AdminStudentController(view.getStudentPanel(), view);
         this.teacherController = new AdminTeacherController(view.getTeacherPanel(), view);
         
+        view.addPropertyChangeListener(this::handlePropertyChange);
+        
         // Set up menu listeners
         setupMenuListeners();
-
         
         // Load initial data
         this.studentController.loadStudentData();
@@ -136,5 +143,84 @@ public class AdminController {
             return (Teacher) teacherComboBox.getSelectedItem();
         }
         return null;
+    }
+    
+    private void handleProfilePictureUpdate(String profilePicturePath) {
+        AdminDA adminDA = new AdminDA();
+        boolean success = adminDA.updateAdminProfilePicture(currentUser.getId(), profilePicturePath);
+        
+        if (success) {
+            currentUser.setProfilePicture(profilePicturePath);
+            view.updateProfilePicture(profilePicturePath);
+            JOptionPane.showMessageDialog(view,
+                "Profile picture updated successfully", 
+                "Success", 
+                JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(view,
+                "Failed to update profile picture", 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void handleProfilePictureRemoval() {
+        // Get the current profile picture path before removing it
+        String oldProfilePicturePath = currentUser.getProfilePicture();
+        
+        AdminDA adminDA = new AdminDA();
+        
+        // Update database to set profile picture to null
+        boolean success = adminDA.updateAdminProfilePicture(currentUser.getId(), null);
+        
+        if (success) {
+            // Delete the old file if it exists
+            if (oldProfilePicturePath != null && !oldProfilePicturePath.isEmpty()) {
+                try {
+                    Files.deleteIfExists(Paths.get(oldProfilePicturePath));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    // Continue even if file deletion fails
+                }
+            }
+            
+            // Update user model
+            currentUser.setProfilePicture(null);
+            
+            // Update UI
+            view.updateProfilePicture(null);
+            
+            JOptionPane.showMessageDialog(view, 
+                "Profile picture removed successfully", 
+                "Success", 
+                JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(view, 
+                "Failed to remove profile picture", 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void handlePropertyChange(PropertyChangeEvent evt) {
+        String propertyName = evt.getPropertyName();
+        
+        switch (propertyName) {
+            case "profilePictureUpdated":
+                String newProfilePicturePath = (String) evt.getNewValue();
+                handleProfilePictureUpdate(newProfilePicturePath);
+                break;
+                
+            case "profilePictureRemoved":
+                handleProfilePictureRemoval();
+                break;
+        }
+    }
+    
+    public void showErrorMessage(String message) {
+        JOptionPane.showMessageDialog(view, 
+            message, 
+            "Error", 
+            JOptionPane.ERROR_MESSAGE);
     }
 }

@@ -1,5 +1,6 @@
 package controller.student;
 
+import model.dao.StudentDA;
 import model.entities.Auth;
 import view.admin.AdminView;
 
@@ -26,5 +27,15 @@ public class StudentController {
         // Example: this.view.setLogoutButtonListener(e -> handleLogout());
     }
     
-    // Additional controller methods
+    private void handleProfilePictureUpdate(String profilePicturePath) {
+        StudentDA studentDA = new StudentDA();
+        boolean success = studentDA.updateStudentProfilePicture(currentUser.getId(), profilePicturePath);
+        
+        if (success) {
+            currentUser.setProfilePicture(profilePicturePath);
+            view.updateProfilePicture(profilePicturePath);
+        } else {
+            view.showErrorMessage("Failed to update profile picture");
+        }
+    }
 }
