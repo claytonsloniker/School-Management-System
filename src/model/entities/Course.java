@@ -5,9 +5,6 @@ public class Course {
 		private String code, name, description, status;
 		private int max_capacity;
 		
-		
-		
-		
 		/**
 		 * @param code
 		 * @param name
@@ -87,8 +84,7 @@ public class Course {
 		
 		@Override
 		public String toString() {
-			return "Course [code=" + code + ", name=" + name + ", description=" + description + ", status=" + status
-					+ ", max_capacity=" + max_capacity + "]";
+		    return code + " - " + name;
 		}
 		
 		

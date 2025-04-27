@@ -10,6 +10,7 @@ public class AuthView extends JFrame {
     private JPasswordField passwordField;
     private JButton loginButton;
     private JButton cancelButton;
+    private JButton forgotPasswordButton;
     
     public AuthView() {
         // Set up the frame
@@ -44,6 +45,15 @@ public class AuthView extends JFrame {
         formPanel.add(emailField);
         formPanel.add(passwordLabel);
         formPanel.add(passwordField);
+        
+        forgotPasswordButton = new JButton("Forgot Password?");
+        forgotPasswordButton.setBorderPainted(false);
+        forgotPasswordButton.setContentAreaFilled(false);
+        forgotPasswordButton.setForeground(Color.BLUE);
+        forgotPasswordButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        JPanel linkPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        linkPanel.add(forgotPasswordButton);
         
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         buttonPanel.add(loginButton);
@@ -82,5 +92,9 @@ public class AuthView extends JFrame {
     
     public void showSuccessMessage(String message) {
         JOptionPane.showMessageDialog(this, message, "Success", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    public void setForgotPasswordButtonListener(ActionListener listener) {
+        forgotPasswordButton.addActionListener(listener);
     }
 }

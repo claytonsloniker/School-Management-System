@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import model.entities.CourseWithTeacher;
 
 public class CourseTableModel extends AbstractTableModel {
-    private String[] columnNames = {"Code", "Name", "Max Capacity", "Teacher"};
+    
+	private String[] columnNames = {"Code", "Name", "Max Capacity", "Teacher"};
     private ArrayList<CourseWithTeacher> courses;
 
     public CourseTableModel(ArrayList<CourseWithTeacher> courses) {

@@ -1,96 +1,58 @@
 package model.entities;
 
-public class Teacher {
-    private String id;
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String password;
+public class Teacher extends User {
+    
     private String status;
-    private String profilePicture;
     
-    public Teacher(String id, String firstName, String lastName, String email, String password, String status) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.password = password;
-        this.status = status;
-    }
-    
-    public Teacher(String id, String firstName, String lastName, String email) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.password = "";
+    /**
+     * Constructor for Teacher with minimal information
+     * @param id Teacher ID
+     * @param firstName First name
+     * @param lastName Last name
+     */
+    public Teacher(String id, String firstName, String lastName) {
+        super(id, "teacher", firstName, lastName, "", "");
         this.status = "active";
     }
     
-    public Teacher(String id, String firstName, String lastName) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
+    /**
+     * Constructor for Teacher with email
+     * @param id Teacher ID
+     * @param firstName First name
+     * @param lastName Last name
+     * @param email Email address
+     */
+    public Teacher(String id, String firstName, String lastName, String email) {
+        super(id, "teacher", firstName, lastName, email, "");
+        this.status = "active";
     }
     
-    public String getId() {
-        return id;
+    /**
+     * Full constructor for Teacher
+     * @param id Teacher ID
+     * @param firstName First name
+     * @param lastName Last name
+     * @param email Email address
+     * @param password Password (hashed)
+     * @param status Account status (active/inactive)
+     */
+    public Teacher(String id, String firstName, String lastName, String email, String password, String status) {
+        super(id, "teacher", firstName, lastName, email, password);
+        this.status = status;
     }
     
-    public void setId(String id) {
-        this.id = id;
-    }
-    
-    public String getFirstName() {
-        return firstName;
-    }
-    
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-    
-    public String getLastName() {
-        return lastName;
-    }
-    
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-    
-    public String getEmail() {
-        return email;
-    }
-    
-    public void setEmail(String email) {
-        this.email = email;
-    }
-    
-    public String getPassword() {
-        return password;
-    }
-    
-    public void setPassword(String password) {
-        this.password = password;
-    }
-    
+    /**
+     * @return the status
+     */
     public String getStatus() {
         return status;
     }
     
+    /**
+     * @param status the status to set
+     */
     public void setStatus(String status) {
         this.status = status;
-    }
-    
-    public String getFullName() {
-        return firstName + " " + lastName;
-    }
-    
-    public String getProfilePicture() {
-        return profilePicture;
-    }
-
-    public void setProfilePicture(String profilePicture) {
-        this.profilePicture = profilePicture;
     }
     
     @Override

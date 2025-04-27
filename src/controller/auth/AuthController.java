@@ -1,9 +1,13 @@
 package controller.auth;
 
 import model.dao.AdminDA;
+import model.dao.StudentDA;
+import model.dao.TeacherDA;
 import model.entities.Admin;
 import model.entities.Auth;
 import model.entities.AuthModel;
+import model.entities.Student;
+import model.entities.Teacher;
 import view.auth.AuthView;
 import controller.admin.AdminController;
 import controller.student.StudentController;
@@ -68,17 +72,38 @@ public class AuthController {
                     return;
                 }
                 
-                // Initialize admin view and controller
+                // Initialize admin controller
                 new AdminController(adminUser);
                 break;
+                
             case "student":
-                // Initialize student view and controller
-                new StudentController(user);
+                // Get full Student object from database
+                StudentDA studentDA = new StudentDA();
+                Student studentUser = studentDA.getStudentById(user.getId());
+                
+                if (studentUser == null) {
+                    view.showErrorMessage("Failed to load student user data");
+                    return;
+                }
+                
+                // Initialize student controller
+                new StudentController(studentUser);
                 break;
+                
             case "teacher":
-                // Initialize teacher view and controller
-                new TeacherController(user);
+                // Get full Teacher object from database
+                TeacherDA teacherDA = new TeacherDA();
+                Teacher teacherUser = teacherDA.getTeacherById(user.getId());
+                
+                if (teacherUser == null) {
+                    view.showErrorMessage("Failed to load teacher user data");
+                    return;
+                }
+                
+                // Initialize teacher controller
+                new TeacherController(teacherUser);
                 break;
+                
             default:
                 view.showErrorMessage("Unknown role type: " + user.getRoleType());
                 break;
