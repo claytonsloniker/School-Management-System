@@ -42,4 +42,56 @@ public class UserDA {
             stm.setString(3, roleType.toLowerCase());
         }, null);
     }
+    
+    /**
+     * Check if an email exists in the system
+     * @param email The email to check
+     * @return true if the email exists, false otherwise
+     */
+    public boolean doesEmailExist(String email) {
+        String query = "SELECT COUNT(*) AS count FROM tb_user WHERE email = ?";
+        
+        return new Database().executeQuery(query, stm -> {
+            stm.setString(1, email);
+        }, results -> {
+            if (results.next()) {
+                int count = results.getInt("count");
+                return count > 0;
+            }
+            return false;
+        });
+    }
+    
+    /**
+     * Update a user's password
+     * @param email The user's email
+     * @param hashedPassword The new hashed password
+     * @return true if the update was successful, false otherwise
+     */
+    public boolean updatePasswordByEmail(String email, String hashedPassword) {
+        String query = "UPDATE tb_user SET password = ? WHERE email = ?";
+        
+        return new Database().executeQuery(query, stm -> {
+            stm.setString(1, hashedPassword);
+            stm.setString(2, email);
+        }, null);
+    }
+    
+    /**
+     * Get user role by email
+     * @param email The user's email
+     * @return The user's role (student, teacher, admin) or null if not found
+     */
+    public String getUserRoleByEmail(String email) {
+        String query = "SELECT role_type FROM tb_user WHERE email = ?";
+        
+        return new Database().executeQuery(query, stm -> {
+            stm.setString(1, email);
+        }, results -> {
+            if (results.next()) {
+                return results.getString("role_type");
+            }
+            return null;
+        });
+    }
 }

@@ -6,6 +6,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -14,29 +15,30 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class PasswordRecoveryDialog extends JDialog {
+public class ForgotPasswordDialog extends JDialog {
     
     private JTextField emailField;
     private JButton submitButton;
     private JButton cancelButton;
     private boolean recoveryRequested = false;
     
-    public PasswordRecoveryDialog(JFrame parent) {
+    public ForgotPasswordDialog(JFrame parent) {
         super(parent, "Password Recovery", true);
         
         // Set up dialog properties
-        setSize(400, 200);
+        setSize(400, 180);
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout(10, 10));
         
         // Create main panel
         JPanel mainPanel = new JPanel(new GridBagLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         
         // Create components
-        JLabel instructionLabel = new JLabel("Enter your email address to reset your password:");
+        JLabel instructionLabel = new JLabel("Enter your email address to receive a temporary password:");
         JLabel emailLabel = new JLabel("Email:");
         emailField = new JTextField(20);
         
@@ -85,7 +87,7 @@ public class PasswordRecoveryDialog extends JDialog {
             return false;
         }
         
-        // Simple validation - you might want to use a more comprehensive pattern
+        // Simple validation
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
         if (!email.matches(emailRegex)) {
             JOptionPane.showMessageDialog(this, 

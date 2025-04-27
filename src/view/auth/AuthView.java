@@ -15,7 +15,7 @@ public class AuthView extends JFrame {
     public AuthView() {
         // Set up the frame
         setTitle("School Management System - Login");
-        setSize(400, 225);
+        setSize(425, 250);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         
@@ -46,23 +46,27 @@ public class AuthView extends JFrame {
         formPanel.add(passwordLabel);
         formPanel.add(passwordField);
         
-        forgotPasswordButton = new JButton("Forgot Password?");
+        forgotPasswordButton = new JButton("Forgot Password");
+        forgotPasswordButton.setFont(new Font("Arial", Font.PLAIN, 12));
+        forgotPasswordButton.setForeground(Color.BLUE);
         forgotPasswordButton.setBorderPainted(false);
         forgotPasswordButton.setContentAreaFilled(false);
-        forgotPasswordButton.setForeground(Color.BLUE);
         forgotPasswordButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         
-        JPanel linkPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        linkPanel.add(forgotPasswordButton);
-        
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        JPanel loginPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        loginPanel.add(forgotPasswordButton);
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         buttonPanel.add(loginButton);
         buttonPanel.add(cancelButton);
         
+        bottomPanel.add(loginPanel, BorderLayout.NORTH);
+        bottomPanel.add(buttonPanel, BorderLayout.SOUTH);
+        
         // Add components to main panel
         mainPanel.add(titlePanel, BorderLayout.NORTH);
         mainPanel.add(formPanel, BorderLayout.CENTER);
-        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
         
         // Add main panel to frame
         add(mainPanel);

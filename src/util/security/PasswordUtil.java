@@ -2,6 +2,7 @@ package util.security;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Random;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -54,5 +55,43 @@ public class PasswordUtil {
     public static boolean verifyPassword(String providedPassword, String storedHash) {
         String hashedProvidedPassword = hashPassword(providedPassword);
         return hashedProvidedPassword.equals(storedHash);
+    }
+    
+    /**
+     * Generate a random temporary password
+     * @param length Length of the password
+     * @return Random temporary password
+     */
+    public static String generateTemporaryPassword(int length) {
+        String upperChars = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+        String lowerChars = "abcdefghijkmnopqrstuvwxyz";
+        String numbers = "23456789";
+        String specialChars = "!@#$%^&*";
+        
+        String allChars = upperChars + lowerChars + numbers + specialChars;
+        Random random = new Random();
+        
+        // Ensure password has at least one character from each set
+        StringBuilder password = new StringBuilder();
+        password.append(upperChars.charAt(random.nextInt(upperChars.length())));
+        password.append(lowerChars.charAt(random.nextInt(lowerChars.length())));
+        password.append(numbers.charAt(random.nextInt(numbers.length())));
+        password.append(specialChars.charAt(random.nextInt(specialChars.length())));
+        
+        // Fill remaining length with random characters
+        for (int i = 4; i < length; i++) {
+            password.append(allChars.charAt(random.nextInt(allChars.length())));
+        }
+        
+        // Shuffle the password characters
+        char[] passwordArray = password.toString().toCharArray();
+        for (int i = 0; i < passwordArray.length; i++) {
+            int j = random.nextInt(passwordArray.length);
+            char temp = passwordArray[i];
+            passwordArray[i] = passwordArray[j];
+            passwordArray[j] = temp;
+        }
+        
+        return new String(passwordArray);
     }
 }
