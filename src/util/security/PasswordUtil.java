@@ -24,7 +24,6 @@ public class PasswordUtil {
             return bytesToHex(encodedHash);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
-            // Fall back to plain text if hashing fails (should never happen with SHA-256)
             return password;
         }
     }
@@ -71,19 +70,19 @@ public class PasswordUtil {
         String allChars = upperChars + lowerChars + numbers + specialChars;
         Random random = new Random();
         
-        // Ensure password has at least one character from each set
+        // password formatting
         StringBuilder password = new StringBuilder();
         password.append(upperChars.charAt(random.nextInt(upperChars.length())));
         password.append(lowerChars.charAt(random.nextInt(lowerChars.length())));
         password.append(numbers.charAt(random.nextInt(numbers.length())));
         password.append(specialChars.charAt(random.nextInt(specialChars.length())));
         
-        // Fill remaining length with random characters
+        // fill with random chars
         for (int i = 4; i < length; i++) {
             password.append(allChars.charAt(random.nextInt(allChars.length())));
         }
         
-        // Shuffle the password characters
+        //shuffle the pass chars
         char[] passwordArray = password.toString().toCharArray();
         for (int i = 0; i < passwordArray.length; i++) {
             int j = random.nextInt(passwordArray.length);

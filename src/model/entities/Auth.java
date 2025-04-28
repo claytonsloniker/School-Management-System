@@ -6,6 +6,7 @@ public class Auth {
     private String firstName;
     private String lastName;
     private String profilePicture;
+    private String password;
     
     /**
      * @param id
@@ -82,6 +83,14 @@ public class Auth {
 
     public void setProfilePicture(String profilePicture) {
         this.profilePicture = profilePicture;
+    }
+    
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
     
     @Override

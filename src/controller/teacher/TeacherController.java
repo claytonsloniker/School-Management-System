@@ -23,35 +23,28 @@ public class TeacherController extends BaseController {
     private CourseDA courseDA;
     private MessageDA messageDA;
     
-    // Controllers for specific features
     private TeacherCourseController courseController;
     private TeacherStudentController studentController;
     private TeacherMessageController messageController;
     
     public TeacherController(Teacher teacher) {
-        // Pass the teacher and view to super
         super(teacher, new TeacherView(teacher));
         
-        // Cast the view for easier access
         this.teacherView = (TeacherView) view;
         
-        // Initialize data access objects
+        // data access objects
         this.teacherDA = new TeacherDA();
         this.courseDA = new CourseDA();
         this.messageDA = new MessageDA();
         
-        // Initialize feature controllers
+        // feature controllers
         this.courseController = new TeacherCourseController(teacherView.getCoursesPanel(), this);
         this.studentController = new TeacherStudentController(teacherView.getStudentsPanel(), this);
         this.messageController = new TeacherMessageController(teacherView.getMessagesPanel(), this);
         
-        // Set up menu listeners
         setupMenuListeners();
-        
-        // Initialize the teacher data
         initialize();
         
-        // Display the view
         this.view.setVisible(true);
     }
     
@@ -65,7 +58,7 @@ public class TeacherController extends BaseController {
     protected void setupSpecificListeners() {
     	TeacherView teacherView = (TeacherView) view;
         
-        // Set up cross-panel navigation listeners
+        // cross-panel navigation listeners
         teacherView.getCoursesPanel().setViewStudentsButtonListener(e -> {
             Course selectedCourse = teacherView.getCoursesPanel().getSelectedCourse();
             if (selectedCourse != null) {
@@ -100,10 +93,7 @@ public class TeacherController extends BaseController {
         try {
             ArrayList<Course> courses = teacherDA.getCoursesForTeacher(currentUser.getId());
             
-            // Update the course panel table
             courseController.updateCourseTable(courses);
-            
-            // Also update the course selectors in other panels
             teacherView.getStudentsPanel().updateCourseSelector(courses);
             teacherView.getMessagesPanel().updateCourseSelector(courses);
         } catch (Exception e) {
@@ -114,10 +104,7 @@ public class TeacherController extends BaseController {
     
     @Override
     protected void initialize() {
-        // Call parent initialize
         super.initialize();
-        
-        // Add property change listener to the view
         teacherView.addPropertyChangeListener(this::handlePropertyChange);
     }
 
@@ -155,7 +142,6 @@ public class TeacherController extends BaseController {
     }
 
     protected void handleProfilePictureRemoval() {
-        // Get the current profile picture path before removing it
         String oldProfilePicturePath = currentUser.getProfilePicture();
         
         boolean success = teacherDA.updateTeacherProfilePicture(currentUser.getId(), null);
@@ -167,14 +153,10 @@ public class TeacherController extends BaseController {
                     Files.deleteIfExists(Paths.get(oldProfilePicturePath));
                 } catch (IOException e) {
                     e.printStackTrace();
-                    // Continue even if file deletion fails
                 }
             }
             
-            // Update user model
             currentUser.setProfilePicture(null);
-            
-            // Update UI
             view.updateProfilePicture(null);
             
             JOptionPane.showMessageDialog(view.getFrame(), 
@@ -189,7 +171,6 @@ public class TeacherController extends BaseController {
         }
     }
     
-    // Getter methods for subcontrollers to access shared resources
     public Teacher getTeacher() {
         return (Teacher) currentUser;
     }

@@ -94,4 +94,52 @@ public class UserDA {
             return null;
         });
     }
+    
+    /**
+     * Check if this is the user's first login
+     * @param userId The user ID
+     * @return true if this is the first login, false otherwise
+     */
+    public boolean isFirstLogin(String userId) {
+        String query = "SELECT first_login FROM tb_user WHERE id = ?";
+        
+        return new Database().executeQuery(query, stm -> {
+            stm.setString(1, userId);
+        }, results -> {
+            if (results.next()) {
+                return results.getBoolean("first_login");
+            }
+            return false;
+        });
+    }
+
+    /**
+     * Update the user's first login status
+     * @param userId The user ID
+     * @param firstLogin The first login status
+     * @return true if the update was successful, false otherwise
+     */
+    public boolean updateFirstLoginStatus(String userId, boolean firstLogin) {
+        String query = "UPDATE tb_user SET first_login = ? WHERE id = ?";
+        
+        return new Database().executeQuery(query, stm -> {
+            stm.setBoolean(1, firstLogin);
+            stm.setString(2, userId);
+        }, null);
+    }
+
+    /**
+     * Update user password and first login status
+     * @param userId The user ID
+     * @param hashedPassword The new hashed password
+     * @return true if the update was successful, false otherwise
+     */
+    public boolean updatePasswordAndFirstLoginStatus(String userId, String hashedPassword) {
+        String query = "UPDATE tb_user SET password = ?, first_login = FALSE WHERE id = ?";
+        
+        return new Database().executeQuery(query, stm -> {
+            stm.setString(1, hashedPassword);
+            stm.setString(2, userId);
+        }, null);
+    }
 }

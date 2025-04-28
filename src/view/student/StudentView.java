@@ -261,14 +261,12 @@ public class StudentView extends JFrame implements BaseView {
                 }
                 
                 if (!imageFile.exists()) {
-                    System.out.println("Image file does not exist: " + imageFile.getAbsolutePath());
                     showUserInitials();
                     return;
                 }
                 
                 BufferedImage originalImage = ImageIO.read(imageFile);
                 if (originalImage == null) {
-                    System.out.println("Failed to read image: " + imageFile.getAbsolutePath());
                     showUserInitials();
                     return;
                 }
@@ -284,7 +282,6 @@ public class StudentView extends JFrame implements BaseView {
                 
                 profilePictureLabel.setIcon(new ImageIcon(circleBuffer));
             } catch (Exception e) {
-                System.out.println("Error updating profile picture: " + profilePicturePath);
                 e.printStackTrace();
                 showUserInitials();
             }

@@ -40,8 +40,8 @@ public class TeacherDA {
      * @return true if the teacher was added successfully, false otherwise
      */
     public boolean addTeacher(Teacher teacher) {
-        String query = "INSERT INTO tb_user (first_name, last_name, email, password, role_type) " +
-                      "VALUES (?, ?, ?, ?, 'teacher')";
+        String query = "INSERT INTO tb_user (first_name, last_name, email, password, role_type, first_login) " +
+                      "VALUES (?, ?, ?, ?, 'teacher', TRUE)";
         
         return new Database().executeQuery(query, stm -> {
             stm.setString(1, teacher.getFirstName());
@@ -164,8 +164,6 @@ public class TeacherDA {
                 String lastName = results.getString("last_name");
                 String email = results.getString("email");
                 
-                // We don't have access to the password, so use an empty string
-                // The status is assumed to be "active" for enrolled students
                 Student student = new Student(id, firstName, lastName, email, "", "active");
                 students.add(student);
             }

@@ -21,13 +21,6 @@ public class Main {
             new AuthController(view, model);
             view.setVisible(true);
         });
-		
-		
-		// Debug
-//		ArrayList<CourseModel> courses = new CourseDA().getCourseList();
-//		
-//		System.out.println(courses);
-
 	}
 
 }

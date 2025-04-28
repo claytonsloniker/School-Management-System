@@ -22,6 +22,7 @@ public class AuthDA {
 	            
 	            if (PasswordUtil.verifyPassword(password, storedHash)) {
 	                Auth auth = new Auth(id, roleType, firstName, lastName);
+	                auth.setPassword(storedHash); // Store the hashed password
 	                auth.setProfilePicture(profilePicture);
 	                return auth;
 	            }

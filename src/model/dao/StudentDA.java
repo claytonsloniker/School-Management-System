@@ -28,17 +28,17 @@ public class StudentDA {
 	    });
 	}
     
-    public boolean addStudent(Student student) {
-        String query = "INSERT INTO tb_user (first_name, last_name, email, password, role_type) " +
-                      "VALUES (?, ?, ?, ?, 'student')";
-        
-        return new Database().executeQuery(query, stm -> {
-            stm.setString(1, student.getFirstName());
-            stm.setString(2, student.getLastName());
-            stm.setString(3, student.getEmail());
-            stm.setString(4, student.getPassword());
-        }, null);
-    }
+	public boolean addStudent(Student student) {
+	    String query = "INSERT INTO tb_user (first_name, last_name, email, password, role_type, first_login) " +
+	                  "VALUES (?, ?, ?, ?, 'student', TRUE)";
+	    
+	    return new Database().executeQuery(query, stm -> {
+	        stm.setString(1, student.getFirstName());
+	        stm.setString(2, student.getLastName());
+	        stm.setString(3, student.getEmail());
+	        stm.setString(4, student.getPassword());
+	    }, null);
+	}
     
     public boolean updateStudent(Student student) {
         String query = "UPDATE tb_user " +
@@ -243,8 +243,7 @@ public class StudentDA {
                 Teacher teacher = new Teacher(id, firstName, lastName, email);
                 teachers.add(teacher);
             }
-            
-            System.out.println("Found " + teachers.size() + " teachers for course " + courseCode);
+
             return teachers;
         });
     }

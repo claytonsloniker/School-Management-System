@@ -13,7 +13,7 @@ public class AuthView extends JFrame {
     private JButton forgotPasswordButton;
     
     public AuthView() {
-        // Set up the frame
+        // setup frame
         setTitle("School Management System - Login");
         setSize(425, 250);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

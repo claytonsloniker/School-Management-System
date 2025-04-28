@@ -12,6 +12,7 @@ import model.entities.Teacher;
 import util.security.PasswordUtil;
 import util.email.*;
 import view.auth.AuthView;
+import view.auth.dialogs.ChangePasswordDialog;
 import view.auth.dialogs.ForgotPasswordDialog;
 
 import javax.swing.JOptionPane;
@@ -48,15 +49,61 @@ public class AuthController {
         
         if (success) {
             Auth currentUser = model.getCurrentUser();
-            view.showSuccessMessage("Welcome, " + currentUser.getFirstName() + " " + currentUser.getLastName() + "!");
             
-            // Navigate to the appropriate view based on user role
-            navigateByRole(currentUser);
+            // check if first login
+            UserDA userDA = new UserDA();
+            boolean isFirstLogin = userDA.isFirstLogin(currentUser.getId());
             
-            // Close the login view
-            view.dispose();
+            if (isFirstLogin) {
+                // Show change password dialog
+                handleFirstLoginPasswordChange(currentUser);
+            } else {
+                view.showSuccessMessage("Welcome, " + currentUser.getFirstName() + " " + currentUser.getLastName() + "!");
+                
+                // Navigate to the appropriate view based on user role
+                navigateByRole(currentUser);
+                
+                // Close the login view
+                view.dispose();
+            }
         } else {
             view.showErrorMessage("Invalid email or password. Please try again.");
+        }
+    }
+    
+    private void handleFirstLoginPasswordChange(Auth currentUser) {
+        ChangePasswordDialog dialog = new ChangePasswordDialog(view, true);
+        dialog.setVisible(true);
+        
+        if (dialog.isPasswordChanged()) {
+            String currentPassword = dialog.getCurrentPassword();
+            String newPassword = dialog.getNewPassword();
+            
+            // Verify current password
+            if (!PasswordUtil.verifyPassword(currentPassword, currentUser.getPassword())) {
+                view.showErrorMessage("Current password is incorrect. Please try again.");
+                handleFirstLoginPasswordChange(currentUser);
+                return;
+            }
+            
+            // Update password in database
+            UserDA userDA = new UserDA();
+            String hashedNewPassword = PasswordUtil.hashPassword(newPassword);
+            boolean success = userDA.updatePasswordAndFirstLoginStatus(currentUser.getId(), hashedNewPassword);
+            
+            if (success) {
+                view.showSuccessMessage("Password changed successfully! Welcome, " + 
+                                       currentUser.getFirstName() + " " + currentUser.getLastName() + "!");
+                
+                // Navigate to the appropriate view based on user role
+                navigateByRole(currentUser);
+                
+                //close view
+                view.dispose();
+            } else {
+                view.showErrorMessage("Failed to update password. Please try again.");
+                handleFirstLoginPasswordChange(currentUser);
+            }
         }
     }
     
@@ -76,10 +123,7 @@ public class AuthController {
         // Check if email exists
         boolean emailExists = userDA.doesEmailExist(email);
         
-        System.out.println("DEBUG: Email '" + email + "' exists in database: " + emailExists);
-        
         if (!emailExists) {
-            // Don't reveal if email exists or not for security
             JOptionPane.showMessageDialog(view, 
                 "If your email is registered in our system, you will receive a temporary password shortly.",
                 "Password Reset",
@@ -88,19 +132,15 @@ public class AuthController {
         }
         
         try {
-            // Generate temporary password
+            // Generate temp password
             String tempPassword = PasswordUtil.generateTemporaryPassword(10);
             String hashedTempPassword = PasswordUtil.hashPassword(tempPassword);
             
-            System.out.println("DEBUG: Generated temporary password: " + tempPassword);
-            System.out.println("DEBUG: Hashed password: " + hashedTempPassword);
-            
             // Update user password in database
             boolean passwordUpdated = userDA.updatePasswordByEmail(email, hashedTempPassword);
-            System.out.println("DEBUG: Password updated in database: " + passwordUpdated);
             
             if (passwordUpdated) {
-                // Send email with temporary password
+                // Send email with temp pass
                 EmailUtil.sendTemporaryPasswordEmail(email, tempPassword);
                 
                 JOptionPane.showMessageDialog(view, 
@@ -133,7 +173,6 @@ public class AuthController {
     private void navigateByRole(Auth user) {
         switch (user.getRoleType()) {
             case "admin":
-                // Get full Admin object from database
                 AdminDA adminDA = new AdminDA();
                 Admin adminUser = adminDA.getAdminById(user.getId());
                 
@@ -142,12 +181,10 @@ public class AuthController {
                     return;
                 }
                 
-                // Initialize admin controller
                 new AdminController(adminUser);
                 break;
                 
             case "student":
-                // Get full Student object from database
                 StudentDA studentDA = new StudentDA();
                 Student studentUser = studentDA.getStudentById(user.getId());
                 
@@ -156,12 +193,10 @@ public class AuthController {
                     return;
                 }
                 
-                // Initialize student controller
                 new StudentController(studentUser);
                 break;
                 
             case "teacher":
-                // Get full Teacher object from database
                 TeacherDA teacherDA = new TeacherDA();
                 Teacher teacherUser = teacherDA.getTeacherById(user.getId());
                 
@@ -170,7 +205,6 @@ public class AuthController {
                     return;
                 }
                 
-                // Initialize teacher controller
                 new TeacherController(teacherUser);
                 break;
                 

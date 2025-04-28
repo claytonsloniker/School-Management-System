@@ -67,9 +67,6 @@ public class StudentMessageController {
                 // Get teachers for this course
                 ArrayList<Teacher> teachers = parentController.getStudentDA().getTeachersForCourse(course.getCode());
                 
-                //debug
-                //System.out.println("Loaded " + teachers.size() + " teachers for course " + course.getCode());
-                
                 //Update the view's teacher selector
                 view.updateTeacherSelector(teachers);
                 
@@ -91,16 +88,11 @@ public class StudentMessageController {
     private void loadMessagesForCourseAndTeacher(Course course, Teacher teacher) {
         try {
             if (course != null && teacher != null) {
-                //debug
-            	//System.out.println("Loading messages for course " + course.getCode() + " and teacher " + teacher.getId());
-                
                 ArrayList<Message> messages = parentController.getMessageDA().getMessagesForStudentAndTeacher(
                     parentController.getStudent().getId(),
                     teacher.getId(),
                     course.getCode()
                 );
-                
-                //System.out.println("Loaded " + messages.size() + " messages");
                 
                 // Store the current messages
                 this.currentMessages = messages;

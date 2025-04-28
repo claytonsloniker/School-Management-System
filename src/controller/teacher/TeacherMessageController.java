@@ -21,7 +21,7 @@ public class TeacherMessageController {
         this.parentController = parentController;
         this.currentMessages = new ArrayList<>();
         
-        // Set up listeners
+        // setup listeners
         setupListeners();
     }
     
@@ -58,14 +58,11 @@ public class TeacherMessageController {
                     parentController.getTeacher().getId(), 
                     course.getCode()
                 );
-                
-                //debugging
-                //System.out.println("Loaded " + messages.size() + " messages for course " + course.getCode());
-                
-                // Store the current messages
+
+                // Store current messages
                 this.currentMessages = messages;
                 
-                // Update the view
+                //update view
                 view.updateMessageTable(messages);
             }
         } catch (Exception e) {

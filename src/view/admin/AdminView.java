@@ -27,18 +27,15 @@ public class AdminView extends JFrame {
     private JPanel navigationPanel;
     private Admin currentUser;
     
-    // Panels for different features
     private StudentManagementPanel studentPanel;
     private TeacherManagementPanel teacherPanel;
     private CourseManagementPanel coursePanel;
     
-    // Menu items
     private JMenuItem studentMenuItem;
     private JMenuItem teacherMenuItem;
     private JMenuItem courseMenuItem;
     private JMenuItem logoutMenuItem;
     
-    //action listeners
     private ActionListener logoutListener;
     
     private JLabel profilePictureLabel;
@@ -48,45 +45,36 @@ public class AdminView extends JFrame {
     public AdminView(Admin user) {
         this.currentUser = user;
         
-        // Set up the frame
+        // setup the frame
         setTitle("School Management System - Admin Panel");
         setSize(900, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         
-        // Create the menu bar
         setupMenuBar();
         
-        // Set up the main layout
         setLayout(new BorderLayout());
-        
-        // Create navigation panel (left side)
         setupNavigationPanel();
         
-        // Create content panel (right side)
         contentPanel = new JPanel(new CardLayout());
         
-        // Initialize feature panels
+        // feature panels
         studentPanel = new StudentManagementPanel();
         teacherPanel = new TeacherManagementPanel();
         coursePanel = new CourseManagementPanel();
         
-        // Add panels to content panel
         contentPanel.add(studentPanel, "students");
         contentPanel.add(teacherPanel, "teachers");
         contentPanel.add(coursePanel, "courses");
         
-        // Add panels to main frame
         add(navigationPanel, BorderLayout.WEST);
         add(contentPanel, BorderLayout.CENTER);
         
         this.propertyChangeSupport = new PropertyChangeSupport(this);
         
-        // Show default panel
         showPanel("students");
     }
     
-    // Add getter methods for each panel
     public StudentManagementPanel getStudentPanel() {
         return studentPanel;
     }
@@ -102,7 +90,7 @@ public class AdminView extends JFrame {
     private void setupMenuBar() {
         JMenuBar menuBar = new JMenuBar();
         
-        // Create file menu
+        // file menu
         JMenu fileMenu = new JMenu("File");
         logoutMenuItem = new JMenuItem("Logout");
         JMenuItem exitMenuItem = new JMenuItem("Exit");
@@ -110,7 +98,7 @@ public class AdminView extends JFrame {
         fileMenu.add(new JSeparator());
         fileMenu.add(exitMenuItem);
         
-        // Create management menu
+        //management menu
         JMenu managementMenu = new JMenu("Management");
         studentMenuItem = new JMenuItem("Students");
         teacherMenuItem = new JMenuItem("Teachers");
@@ -119,7 +107,7 @@ public class AdminView extends JFrame {
         managementMenu.add(teacherMenuItem);
         managementMenu.add(courseMenuItem);
         
-        // Add menus to menu bar
+        // Add to menu bar
         menuBar.add(fileMenu);
         menuBar.add(managementMenu);
         
@@ -129,7 +117,7 @@ public class AdminView extends JFrame {
         menuBar.add(Box.createHorizontalGlue());
         menuBar.add(welcomeLabel);
         
-        // Set the menu bar
+        // Set menu bar
         setJMenuBar(menuBar);
     }
     
@@ -146,13 +134,13 @@ public class AdminView extends JFrame {
         profilePanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         profilePanel.setBackground(new Color(240, 240, 240));
         
-        // Configure profile picture
+        //config profile picture
         profilePictureLabel = new JLabel();
         profilePictureLabel.setPreferredSize(new Dimension(80, 80));
         profilePictureLabel.setMaximumSize(new Dimension(80, 80));
         profilePictureLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         
-        // Make the profile picture clickable
+        // make the profile picture clickable
         profilePictureLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         profilePictureLabel.addMouseListener(new MouseAdapter() {
             @Override
@@ -161,53 +149,51 @@ public class AdminView extends JFrame {
             }
         });
         
-        // Create a wrapper panel to center the profile picture horizontally
+        //wrapper panel to center the profile picture horizontally
         JPanel pictureWrapper = new JPanel();
         pictureWrapper.setLayout(new FlowLayout(FlowLayout.CENTER));
         pictureWrapper.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
         pictureWrapper.setBackground(new Color(240, 240, 240));
         pictureWrapper.add(profilePictureLabel);
         
-        // Add username label underneath profile picture
+        //username label underneath profile picture
         JLabel usernameLabel = new JLabel(currentUser.getFullName());
         usernameLabel.setFont(new Font("Arial", Font.BOLD, 14));
         usernameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         
-        // Add components to profile panel with proper spacing
+        // add components to profile panel with proper spacing
         profilePanel.add(pictureWrapper);
         profilePanel.add(Box.createRigidArea(new Dimension(0, 5)));
         profilePanel.add(usernameLabel);
         profilePanel.add(Box.createRigidArea(new Dimension(0, 10)));
         
-        // Add separator line
+        // separator line
         JSeparator separator = new JSeparator();
         separator.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
         profilePanel.add(separator);
         profilePanel.add(Box.createRigidArea(new Dimension(0, 15)));
         
-        // Add profile panel to navigation panel
         navigationPanel.add(profilePanel);
         
-        // Create management buttons
+        // management buttons
         JButton studentsButton = createNavButton("Manage Students");
         JButton teachersButton = createNavButton("Manage Teachers");
         JButton coursesButton = createNavButton("Manage Courses");
         
-        // Add management buttons with proper spacing
+        // add proper spacing
         navigationPanel.add(studentsButton);
         navigationPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         navigationPanel.add(teachersButton);
         navigationPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         navigationPanel.add(coursesButton);
         
-        // Add vertical glue to push logout to bottom
         navigationPanel.add(Box.createVerticalGlue());
         
-        // Add logout button at the bottom
+        //logout button at the bottom
         JButton logoutButton = createNavButton("Logout");
         navigationPanel.add(logoutButton);
         
-        // Configure initial profile picture display
+        // initial profile picture display
         if (currentUser.getProfilePicture() != null && !currentUser.getProfilePicture().isEmpty()) {
             try {
                 updateProfilePicture(currentUser.getProfilePicture());
@@ -218,7 +204,7 @@ public class AdminView extends JFrame {
             showUserInitials();
         }
         
-        // Add action listeners
+        // action listeners
         studentsButton.addActionListener(e -> showPanel("students"));
         teachersButton.addActionListener(e -> showPanel("teachers"));
         coursesButton.addActionListener(e -> showPanel("courses"));
@@ -248,16 +234,13 @@ public class AdminView extends JFrame {
     public void updateProfilePicture(String profilePicturePath) {
         if (profilePicturePath != null && !profilePicturePath.isEmpty()) {
             try {
-                // Handle relative paths by converting to absolute paths if needed
+                //handle relative paths by converting to absolute paths if needed
                 File imageFile = new File(profilePicturePath);
                 if (!imageFile.exists() && !profilePicturePath.contains(":")) {
-                    // If the file doesn't exist and the path is relative, try to resolve it
-                    // relative to the app working directory
                     imageFile = new File(System.getProperty("user.dir"), profilePicturePath);
                 }
                 
                 if (!imageFile.exists()) {
-                    System.out.println("Image file does not exist: " + imageFile.getAbsolutePath());
                     showUserInitials();
                     return;
                 }
@@ -265,7 +248,6 @@ public class AdminView extends JFrame {
                 // load and scale the image
                 BufferedImage originalImage = ImageIO.read(imageFile);
                 if (originalImage == null) {
-                    System.out.println("Failed to read image: " + imageFile.getAbsolutePath());
                     showUserInitials();
                     return;
                 }
@@ -285,10 +267,7 @@ public class AdminView extends JFrame {
                 
                 // Set the image as icon
                 profilePictureLabel.setIcon(new ImageIcon(circleBuffer));
-                System.out.println("Successfully updated profile picture: " + imageFile.getAbsolutePath());
             } catch (Exception e) {
-                // Print the full exception to help with debugging
-                System.out.println("Error updating profile picture: " + profilePicturePath);
                 e.printStackTrace();
                 showUserInitials();
             }
@@ -326,7 +305,7 @@ public class AdminView extends JFrame {
         g2d.setColor(new Color(70, 130, 180)); // Steel blue background
         g2d.fillOval(0, 0, 80, 80);
         
-        // Add text (initials)
+        // add initials
         g2d.setColor(Color.WHITE);
         g2d.setFont(new Font("Arial", Font.BOLD, 32));
         FontMetrics fm = g2d.getFontMetrics();

@@ -29,7 +29,6 @@ public class AdminController {
     private AdminView view;
     private Admin currentUser;
     
-    // Controllers for specific features
     private AdminCourseController courseController;
     private AdminStudentController studentController;
     private AdminTeacherController teacherController;
@@ -37,7 +36,7 @@ public class AdminController {
     public AdminController(Admin user) {
         this.currentUser = user;
         
-        // Initialize the admin view
+        //initialize admin view
         this.view = new AdminView(user);
         
         // Initialize feature controllers
@@ -47,21 +46,14 @@ public class AdminController {
         
         view.addPropertyChangeListener(this::handlePropertyChange);
         
-        // Set up menu listeners
         setupMenuListeners();
         
-        // Load initial data
+        // initial data
         this.studentController.loadStudentData();
         this.teacherController.loadTeacherData();
         loadCourseData();
         
-        // Display the view
         this.view.setVisible(true);
-    }
-    
-    private void setupListeners() {
-        // Set up action listeners for the admin view
-        // Example: this.view.setLogoutButtonListener(e -> handleLogout());
     }
     
     private void setupMenuListeners() {
@@ -89,7 +81,7 @@ public class AdminController {
     }
     
     private void handleLogout() {
-        // Close the admin view
+        // close admin view
         view.dispose();
         
         // Create and show the login view again
@@ -99,7 +91,6 @@ public class AdminController {
             authModel.logout();
             AuthController authController = new AuthController(authView, authModel);
             
-            // Display the login view
             authView.setVisible(true);
         });
     }
@@ -122,7 +113,6 @@ public class AdminController {
             boolean success = new TeacherCourseDA().assignTeacherToCourse(selectedTeacher.getId(), selectedCourse.getCode());
             if (success) {
                 JOptionPane.showMessageDialog(view, "Teacher assigned successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
-                // Reload course data
                 loadCourseData();
             } else {
                 JOptionPane.showMessageDialog(view, "Failed to assign teacher", "Error", JOptionPane.ERROR_MESSAGE);
@@ -131,13 +121,12 @@ public class AdminController {
     }
 
     private Teacher showTeacherSelectionDialog(ArrayList<Teacher> teachers) {
-        // Create a combo box with all teachers
+        // combo box with all teachers
         JComboBox<Teacher> teacherComboBox = new JComboBox<>();
         for (Teacher teacher : teachers) {
             teacherComboBox.addItem(teacher);
         }
         
-        // Show dialog
         int result = JOptionPane.showConfirmDialog(view, teacherComboBox, "Select Teacher", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
             return (Teacher) teacherComboBox.getSelectedItem();
@@ -165,12 +154,10 @@ public class AdminController {
     }
     
     private void handleProfilePictureRemoval() {
-        // Get the current profile picture path before removing it
         String oldProfilePicturePath = currentUser.getProfilePicture();
-        
         AdminDA adminDA = new AdminDA();
         
-        // Update database to set profile picture to null
+        // Update db to set profile picture to null
         boolean success = adminDA.updateAdminProfilePicture(currentUser.getId(), null);
         
         if (success) {
@@ -180,7 +167,6 @@ public class AdminController {
                     Files.deleteIfExists(Paths.get(oldProfilePicturePath));
                 } catch (IOException e) {
                     e.printStackTrace();
-                    // Continue even if file deletion fails
                 }
             }
             

@@ -26,26 +26,22 @@ public class StudentController extends BaseController {
     private StudentMessageController messageController;
     
     public StudentController(Student student) {
-        // Pass the student and view to super
         super(student, new StudentView(student));
         
-        // Cast the view for easier access
         this.studentView = (StudentView) view;
         
-        // Initialize data access objects
+        // data access objects
         this.studentDA = new StudentDA();
         this.courseDA = new CourseDA();
         this.messageDA = new MessageDA();
         
-        // Initialize feature controllers
+        // feature controllers
         this.courseController = new StudentCourseController(studentView.getCoursesPanel(), this);
         this.enrollController = new StudentEnrollController(studentView.getEnrollPanel(), this);
         this.messageController = new StudentMessageController(studentView.getMessagesPanel(), this);
         
-        // Set up menu listeners
         setupMenuListeners();
         
-        // Initialize the student data
         initialize();
         
         // Display the view
@@ -65,10 +61,9 @@ public class StudentController extends BaseController {
     @Override
     protected void loadInitialData() {
         try {
-            // Load student's enrolled courses
+            // student's enrolled courses
             ArrayList<Course> courses = studentDA.getCoursesForStudent(currentUser.getId());
             
-            // Update the course panel table
             courseController.updateCourseTable(courses);
             
             //update the course selector in messages panel
@@ -80,7 +75,6 @@ public class StudentController extends BaseController {
                 messageController.loadTeachersForCourse(firstCourse);
             }
             
-            // Load available courses for enrollment
             enrollController.loadAvailableCourses();
         } catch (Exception e) {
             showErrorMessage("Error loading initial data: " + e.getMessage());
@@ -106,22 +100,17 @@ public class StudentController extends BaseController {
     
     @Override
     protected void initialize() {
-        // Call parent initialize
         super.initialize();
         
-        // Add property change listener to the view
+        //add to view
         studentView.addPropertyChangeListener(this::handlePropertyChange);
     }
 
     @Override
     protected void handlePropertyChange(PropertyChangeEvent evt) {
-        // Call parent handler
         super.handlePropertyChange(evt);
-        
-        // Add student-specific property change handling if needed
     }
 
-    // Getter methods for subcontrollers to access shared resources
     public Student getStudent() {
         return (Student) currentUser;
     }

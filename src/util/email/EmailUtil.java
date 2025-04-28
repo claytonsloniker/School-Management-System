@@ -18,7 +18,6 @@ public class EmailUtil {
      * @throws MessagingException if there's an error sending the email
      */
     public static void sendTemporaryPasswordEmail(String toEmail, String tempPassword) throws MessagingException {
-        // Set properties
         Properties props = new Properties();
         props.put("mail.smtp.host", SMTP_HOST);
         props.put("mail.smtp.port", SMTP_PORT);
@@ -26,7 +25,6 @@ public class EmailUtil {
         props.put("mail.smtp.starttls.enable", "true");
         props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
         
-        // Create session
         Session session = Session.getInstance(props, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
@@ -34,7 +32,6 @@ public class EmailUtil {
             }
         }); 
         
-        // Create message
         Message message = new MimeMessage(session);
         message.setFrom(new InternetAddress(FROM_EMAIL));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
@@ -53,7 +50,6 @@ public class EmailUtil {
         
         message.setContent(htmlContent, "text/html");
         
-        // Send message
         Transport.send(message);
     }
 }
